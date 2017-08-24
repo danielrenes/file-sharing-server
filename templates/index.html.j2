@@ -1,0 +1,62 @@
+<html>
+
+  <head>
+    <title>Catalog</title>
+    <meta charset="utf-8"></meta>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></link>
+    <script
+			  src="https://code.jquery.com/jquery-3.2.1.min.js"
+			  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+			  crossorigin="anonymous">
+    </script>
+    <script type="text/javascript">
+      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+    <script src="{{ url_for('static', filename='functions.js') }}"></script>
+  </head>
+
+  <body>
+
+    <table class="files">
+      <thead>
+        <tr>
+          <th class="wide">Filename</th>
+          <th class="narrow">Owner</th>
+          <th class="narrow">Cached</th>
+          <th class="narrow">Download</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for key, value in shared.iteritems() %}
+          {% for item in value %}
+          {% set filename = item.name.split('/')[-1] %}
+            <tr>
+                <td class="filename">
+                  {{ filename }}
+                </td>
+                <td class="owner">
+                  {{ item.owner }}
+                </td>
+                <td class="cached">
+                  {% if item.cached %}
+                    <img src="{{ url_for('static', filename='icons/cache.svg') }}" height="20"></img>
+                  {% else %}
+                    <img src="{{ url_for('static', filename='icons/no_cache.svg') }}" height="20"></img>
+                  {% endif %}
+                </td>
+                <td class="download">
+                  <a href="{{ url_for('download', host=key, filename=filename) }}">
+                    <img src="{{ url_for('static', filename='icons/download.svg') }}" height="20"></img>
+                  </a>
+                </td>
+            </tr>
+          {% endfor %}
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% include 'flashes.html.j2' %}
+
+  </body>
+
+</html>
